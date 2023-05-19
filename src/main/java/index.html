@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculator</title>
+    <style>
+        /* CSS styling for the form and elements */
+        body {
+            font-family:"Calibri", sans-serif;
+            font-size: 14px;
+            line-height: 16px;
+        }
+        
+        form {
+            margin: 25px auto;
+            padding: 25px;
+            background-color: #ccc;
+            max-width: 1024px;
+        }
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+        .column {
+            width: 30%;
+            margin: 0;
+            padding: 10px;
+            float: left;
+            
+        }
+        label {
+            display: block;
+        }
+        
+        .result {
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Form for the calculator -->
+    <form onsubmit="submitForm(); return false;">
+        <div class="clearfix">
+            <!-- Left Operand input field -->
+            <div class="column">
+                <label>Left Operand</label>
+                <input type="number" name="leftOperand" required>
+            </div>    
+            <!-- Operation selection radio buttons -->
+            <div class="column">
+                <input type="radio" name="operation" value="+">+ Addition <br>
+                <input type="radio" name="operation" value="-">- Subtraction <br>
+                <input type="radio" name="operation" value="*">* Multiplication <br>
+                <input type="radio" name="operation" value="/">/ Division <br>
+                <input type="radio" name="operation" value="%">% Remainder <br>
+            </div>
+            <!-- Right Operand input field -->
+            <div class="column">
+                <label>Right Operand</label>
+                <input type="number" name="rightOperand" required>
+            </div>
+        </div>
+        <!-- Calculate button -->
+        <div class="clearfix">
+            <button type="submit" onsubmit="submitForm">Calculate</button>
+        </div>
+        
+        <!-- Result display section -->
+        <div class="clearfix result">
+            Expression: <span id="expression"></span>
+            <br>
+            <br>
+            <br>
+            Result: <span id="result"></span>
+        </div>
+    </form>
+    
+    
+    <script>
+        // Function to handle form submission
+        async function submitForm() {
+            const form = document.querySelector('form');
+            const data = new FormData(form);
+
+            let queryString = "";
+            // Construct the query string by iterating over form data
+            data.forEach(function(value, key){
+                queryString += key+"="+value+"&";
+            });
+
+            // Send a request to the server with the query string
+            const response = await fetch("http://localhost:8080/?"+queryString);
+            const jsonData = await response.json();
+
+            // Update the expression and result on the page
+            document.querySelector('#expression').innerHTML = jsonData.Expression;  
+            document.querySelector('#result').innerHTML = jsonData.Result;
+        }
+    </script>
+</body>
+</html>
